@@ -21,6 +21,7 @@ from torch.autograd import Variable
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.misc
+from utils import count_model_flops
 from PIL import Image
 import json
 
@@ -70,9 +71,10 @@ class Solver(object):
             else:
                 num_params += p.numel()
         print(name)
-        print(model)
+        #print(model)
         print("The number of trainable parameters: {}".format(num_params_t))
         print("The number of parameters: {}".format(num_params))
+        print(f'Flops:{count_model_flops(model)}')
 
     # build the network
     '''def build_model(self):
