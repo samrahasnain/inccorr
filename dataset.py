@@ -128,7 +128,7 @@ def load_image_test(path,image_size):
     in_ = np.array(im, dtype=np.float32)
     im_size = tuple(in_.shape[:2])
     in_ = cv2.resize(in_, (image_size, image_size))
-    #in_ = Normalization(in_)
+    in_ = Normalization(in_)
     in_ = in_.transpose((2, 0, 1))
     return in_, im_size
 
