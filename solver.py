@@ -103,8 +103,8 @@ class Solver(object):
         time_s = time.time()
         img_num = len(self.test_loader)
         for i, data_batch in enumerate(self.test_loader):
-            images, name, im_size, depth = data_batch['image'], data_batch['name'][0], np.asarray(data_batch['size']), \
-                                           data_batch['depth']
+            images, depth, name, im_size = data_batch['image'], data_batch['depth'], data_batch['name'][0], np.asarray(data_batch['size'])
+                                          
             with torch.no_grad():
                 if self.config.cuda:
                     device = torch.device(self.config.device_id)
