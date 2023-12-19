@@ -65,15 +65,23 @@ class Solver(object):
     def print_network(self, model, name):
         num_params_t = 0
         num_params=0
+        param_size = 0
+
         for p in model.parameters():
+            param_size += p.nelement() * p.element_size()
             if p.requires_grad:
                 num_params_t += p.numel()
             else:
                 num_params += p.numel()
-        print(name)
+        buffer_size = 0
+        for buffer in model.buffers():
+            buffer_size += buffer.nelement() * buffer.element_size()
+        #print(name)
         #print(model)
-        print("The number of trainable parameters: {}".format(num_params_t))
-        print("The number of parameters: {}".format(num_params))
+        size_all_mb = (param_size + buffer_size) / 1024**2
+        print('model size: {:.6f}MB'.format(size_all_mb))
+        print("The number of trainable parameters: {:.6f}".format(num_params_t))
+        print("The number of parameters: {:.6f}".format(num_params))
         print(f'Flops:{count_model_flops(model)}')
 
     # build the network
@@ -104,8 +112,13 @@ class Solver(object):
                     depth = depth.to(device)
 
                 #input = torch.cat((images, depth), dim=0)
+                # start time
+                torch.cuda.synchronize()
+                tsince = int(round(time.time()*1000)) 
                 preds,coarse_sal_rgb,coarse_sal_depth,f_att3,f_att2,corr_rgb2d2,corr_rgb2d3,corr_d2rgb2,corr_d2rgb3,Att,e_rgbd0,e_rgbd1,e_rgbd2,rgb_1,rgb_2,rgb_3,rgb_4,rgb_5,depth_1,depth_2,depth_3,depth_4,depth_5,rgbd_fusion_1,rgbd_fusion_2,rgbd_fusion_3,rgbd_fusion_4,rgbd_fusion_5= self.net(images,depth)
- 
+                torch.cuda.synchronize()
+                ttime_elapsed = int(round(time.time()*1000)) - tsince
+                print ('test time elapsed {}ms'.format(ttime_elapsed))
                 preds = F.interpolate(preds, tuple(im_size), mode='bilinear', align_corners=True)
                 pred = np.squeeze(torch.sigmoid(preds)).cpu().data.numpy()
                 #print(pred.shape)
@@ -113,7 +126,7 @@ class Solver(object):
                 multi_fuse = 255 * pred
                 filename = os.path.join(self.config.test_folder, name[:-4] + '_convtran.png')
                 cv2.imwrite(filename, multi_fuse)
-                f_att3=(torch.sum(f_att3,1)/f_att3.shape[1]).unsqueeze(0)
+                '''f_att3=(torch.sum(f_att3,1)/f_att3.shape[1]).unsqueeze(0)
                 #f_att3 = f_att3[0].clone()
                 f_att3 = F.interpolate(f_att3, tuple(im_size), mode='bilinear', align_corners=True)
                 f_att3 = f_att3.sigmoid().data.cpu().numpy().squeeze()
@@ -321,7 +334,7 @@ class Solver(object):
                 rgbd_fusion_5 = (rgbd_fusion_5 -rgbd_fusion_5.min()) / (rgbd_fusion_5.max() - rgbd_fusion_5.min() + 1e-8)
                 rgbd_fusion_5 = 255 * rgbd_fusion_5
                 filename = os.path.join(self.config.test_folder, name[:-4] + 'rgbd_fusion_5_rgbonly.png')
-                cv2.imwrite(filename, rgbd_fusion_5)
+                cv2.imwrite(filename, rgbd_fusion_5)'''
 
         time_e = time.time()
         print('Speed: %f FPS' % (img_num / (time_e - time_s)))
