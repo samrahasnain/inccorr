@@ -103,7 +103,7 @@ class Solver(object):
         time_s = time.time()
         img_num = len(self.test_loader)
         for i, data_batch in enumerate(self.test_loader):
-            images, depth, name, im_size = data_batch['image'], data_batch['depth'], data_batch['name'][0], np.asarray(data_batch['size'])
+            images, depth, name = data_batch['image'], data_batch['depth'], data_batch['name'][0]
                                           
             with torch.no_grad():
                 if self.config.cuda:
@@ -119,7 +119,7 @@ class Solver(object):
                 torch.cuda.synchronize()
                 ttime_elapsed = int(round(time.time()*1000)) - tsince
                 print ('test time elapsed {}ms'.format(ttime_elapsed))
-                preds = F.interpolate(preds, tuple(im_size), mode='bilinear', align_corners=True)
+                preds = F.interpolate(preds, tuple(320), mode='bilinear', align_corners=True)
                 pred = np.squeeze(torch.sigmoid(preds)).cpu().data.numpy()
                 #print(pred.shape)
                 pred = (pred - pred.min()) / (pred.max() - pred.min() + 1e-8)
