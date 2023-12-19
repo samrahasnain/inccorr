@@ -159,6 +159,6 @@ if __name__ == '__main__':
     if not os.path.exists(config.save_folder):
         os.mkdir(config.save_folder)
 
-    get_test_info(config)
+    #get_test_info(config)
 
     main(config)
