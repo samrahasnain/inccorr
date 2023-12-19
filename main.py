@@ -150,8 +150,8 @@ if __name__ == '__main__':
     parser.add_argument('--test_folder', type=str, default='test115_int')  # Test results saving folder
     parser.add_argument('--sal_mode', type=str, default='RGBD135',
                         choices=['NJU2K', 'NLPR', 'STERE', 'RGBD135', 'LFSD', 'SIP', 'ReDWeb-S'])  # Test image dataset
-    #parser.add_argument('--test_root', type=str, default='../testsod/RGBD135/RGBD135')
-    #parser.add_argument('--test_list', type=str, default='../testsod/RGBD135/RGBD135/test.lst')
+    parser.add_argument('--test_root', type=str, default='../testsod/RGBD135/RGBD135')
+    parser.add_argument('--test_list', type=str, default='../testsod/RGBD135/RGBD135/test.lst')
     # Misc
     parser.add_argument('--mode', type=str, default='train', choices=['train', 'test'])
     config = parser.parse_args()
