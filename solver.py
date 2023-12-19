@@ -119,14 +119,14 @@ class Solver(object):
                 torch.cuda.synchronize()
                 ttime_elapsed = int(round(time.time()*1000)) - tsince
                 print ('test time elapsed {}ms'.format(ttime_elapsed))
-                preds = F.interpolate(preds, tuple(320), mode='bilinear', align_corners=True)
+                '''preds = F.interpolate(preds, tuple(320), mode='bilinear', align_corners=True)
                 pred = np.squeeze(torch.sigmoid(preds)).cpu().data.numpy()
                 #print(pred.shape)
                 pred = (pred - pred.min()) / (pred.max() - pred.min() + 1e-8)
                 multi_fuse = 255 * pred
                 filename = os.path.join(self.config.test_folder, name[:-4] + '_convtran.png')
                 cv2.imwrite(filename, multi_fuse)
-                '''f_att3=(torch.sum(f_att3,1)/f_att3.shape[1]).unsqueeze(0)
+                f_att3=(torch.sum(f_att3,1)/f_att3.shape[1]).unsqueeze(0)
                 #f_att3 = f_att3[0].clone()
                 f_att3 = F.interpolate(f_att3, tuple(im_size), mode='bilinear', align_corners=True)
                 f_att3 = f_att3.sigmoid().data.cpu().numpy().squeeze()
